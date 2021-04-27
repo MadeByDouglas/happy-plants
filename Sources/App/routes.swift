@@ -19,7 +19,8 @@ func routes(_ app: Application) throws {
     app.post("gardener", ":name", ":plant-name", "light") { req -> String in
         let name = req.parameters.get("name")!
         let plantName = req.parameters.get("plant-name")!
-        let sensorData = try req.content.decode(Light.self)
+        let arduinoData = try req.content.decode(ArduinoSensorData.self)
+        let sensorData = Light(value: arduinoData.value, timestamp: Date())
         
         guard var existingPlant = data[name]?[plantName] else {
             return "No plant with the name \(plantName) owned by \(name) exists"
@@ -50,6 +51,11 @@ func routes(_ app: Application) throws {
             existingPlant.mood = .happy
         }
         
+        print(data[name]?[plantName] as Any)
+        
+        //just in case make sure its saved back to dictionary
+        data[name]?[plantName] = existingPlant
+        
         return "\(name)'s lovely plant \(plantName) updated light value: \(sensorData.value) at \(sensorData.timestamp)"
     }
     
@@ -57,7 +63,9 @@ func routes(_ app: Application) throws {
     app.post("gardener", ":name", ":plant-name", "water") { req -> String in
         let name = req.parameters.get("name")!
         let plantName = req.parameters.get("plant-name")!
-        let sensorData = try req.content.decode(Water.self)
+        let arduinoData = try req.content.decode(ArduinoSensorData.self)
+        let sensorData = Water(value: arduinoData.value, timestamp: Date())
+
         
         guard var existingPlant = data[name]?[plantName] else {
             return "No plant with the name \(plantName) owned by \(name) exists"
@@ -81,6 +89,11 @@ func routes(_ app: Application) throws {
         } else if sensorData.value > 900 {
             existingPlant.mood = .drunk
         }
+        
+        print(data[name]?[plantName] as Any)
+        
+        //just in case make sure its saved back to dictionary
+        data[name]?[plantName] = existingPlant
 
         return "\(name)'s lovely plant \(plantName) updated water value: \(sensorData.value) at \(sensorData.timestamp)"
     }
@@ -145,6 +158,11 @@ struct Plant: Codable, Identifiable, Content {
     var lastInteraction: Date //when there is large delta in either light or water this date updates with sensor data timestamp
     var lastWatered: Date //when there is large positive delta in water triggers this timestamp
     var imageName: String
+}
+
+//arduino can't get date, just sends basic int
+struct ArduinoSensorData: Codable {
+    var value: Int
 }
 
 struct Light: Codable {
