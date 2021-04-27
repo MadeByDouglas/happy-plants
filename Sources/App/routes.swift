@@ -136,7 +136,7 @@ struct Gardener: Codable {
 }
 
 struct Plant: Codable, Identifiable, Content {
-    var id: Int
+    var id: UUID
     var name: String
     var owner: Gardener
     var mood: Mood
