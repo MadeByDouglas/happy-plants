@@ -40,9 +40,9 @@ func routes(_ app: Application) throws {
         let interval = Date() - existingPlant.lastInteraction
         
         // set mood
-        if interval > 100 {
+        if interval > 86400 { // more than a day
             existingPlant.mood = .sad
-        } else if interval < 10 {
+        } else if interval < 60 { // less than a minute
             existingPlant.mood = .happy
         }
         
@@ -86,8 +86,8 @@ func routes(_ app: Application) throws {
         // set mood
         if sensorData.value < 650 {
             existingPlant.mood = .thirsty
-        } else if sensorData.value > 800 {
-            existingPlant.mood = .chill // probably just watered if over 800 so he's content
+        } else if sensorData.value > 850 {
+            existingPlant.mood = .chill // probably just watered if over 850 so he's content
         } else if sensorData.value > 895 {
             existingPlant.mood = .drunk
         }
