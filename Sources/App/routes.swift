@@ -51,10 +51,10 @@ func routes(_ app: Application) throws {
             existingPlant.mood = .happy
         }
         
-        print(data[name]?[plantName] as Any)
         
-        //just in case make sure its saved back to dictionary
+        //update the source dictionary
         data[name]?[plantName] = existingPlant
+        print(data[name]?[plantName] as Any)
         
         return "\(name)'s lovely plant \(plantName) updated light value: \(sensorData.value) at \(sensorData.timestamp)"
     }
@@ -90,10 +90,10 @@ func routes(_ app: Application) throws {
             existingPlant.mood = .drunk
         }
         
-        print(data[name]?[plantName] as Any)
         
-        //just in case make sure its saved back to dictionary
+        //update the source dictionary
         data[name]?[plantName] = existingPlant
+        print(data[name]?[plantName] as Any)
 
         return "\(name)'s lovely plant \(plantName) updated water value: \(sensorData.value) at \(sensorData.timestamp)"
     }
@@ -103,8 +103,8 @@ func routes(_ app: Application) throws {
         let name = req.parameters.get("name")!
         let newPlant = try req.content.decode(Plant.self)
         
-        
-        data[name]?[newPlant.name] = newPlant
+        data[name] = [newPlant.name: newPlant]
+        print(data)
         
         return "New plant named \(newPlant.name) created for \(name)"
 
