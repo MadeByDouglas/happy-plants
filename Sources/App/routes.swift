@@ -34,21 +34,23 @@ func routes(_ app: Application) throws {
         // update data
         existingPlant.lightData = sensorData
         
-        // set mood
-        if sensorData.value < 50 {
-            existingPlant.mood = .scared
-        } else if sensorData.value > 600 {
-            existingPlant.mood = .hot
-        }
+
         
         //determine date difference
-        
-        //ensure previous date
         let interval = Date() - existingPlant.lastInteraction
+        
+        // set mood
         if interval > 100 {
             existingPlant.mood = .sad
         } else if interval < 10 {
             existingPlant.mood = .happy
+        }
+        
+        // these moods come after, are more urgent if they are triggered
+        if sensorData.value < 50 {
+            existingPlant.mood = .scared
+        } else if sensorData.value > 750 {
+            existingPlant.mood = .hot
         }
         
         
@@ -82,11 +84,11 @@ func routes(_ app: Application) throws {
         existingPlant.waterData = sensorData
         
         // set mood
-        if sensorData.value < 400 {
+        if sensorData.value < 650 {
             existingPlant.mood = .thirsty
-        } else if sensorData.value < 900 {
-            existingPlant.mood = .chill
-        } else if sensorData.value > 900 {
+        } else if sensorData.value > 800 {
+            existingPlant.mood = .chill // probably just watered if over 800 so he's content
+        } else if sensorData.value > 895 {
             existingPlant.mood = .drunk
         }
         
